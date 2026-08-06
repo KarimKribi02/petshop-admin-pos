@@ -1,122 +1,201 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
-import './App.css'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { AuthProvider, ProtectedRoute } from './context/AuthContext';
+import Layout from './components/Layout';
+import LoginPage from './pages/LoginPage';
+import AdminDashboardPage from './pages/AdminDashboardPage';
+import PosTerminalPage from './pages/PosTerminalPage';
+import StockEntryPage from './pages/StockEntryPage';
+import ProductsManagement from './pages/ProductsManagement';
+import UsersManagement from './pages/UsersManagement';
+import BrandsManagement from './pages/BrandsManagement';
+import SuppliersManagement from './pages/SuppliersManagement';
+import SupplierPurchasesHistory from './pages/SupplierPurchasesHistory';
+import SalesHistoryReport from './pages/SalesHistoryReport';
+import CategoriesManagement from './pages/CategoriesManagement';
+import StoreSettings from './pages/StoreSettings';
+import FaqsManagement from './pages/FaqsManagement';
+import BlogManagement from './pages/BlogManagement';
 
-function App() {
-  const [count, setCount] = useState(0)
-
+export default function App() {
   return (
-    <>
-      <section id="center">
-        <div className="hero">
-          <img src={heroImg} className="base" width="170" height="179" alt="" />
-          <img src={reactLogo} className="framework" alt="React logo" />
-          <img src={viteLogo} className="vite" alt="Vite logo" />
-        </div>
-        <div>
-          <h1>Get started</h1>
-          <p>
-            Edit <code>src/App.jsx</code> and save to test <code>HMR</code>
-          </p>
-        </div>
-        <button
-          type="button"
-          className="counter"
-          onClick={() => setCount((count) => count + 1)}
-        >
-          Count is {count}
-        </button>
-      </section>
+    <AuthProvider>
+      <BrowserRouter>
+        <Routes>
+          {/* Public Login Route */}
+          <Route path="/login" element={<LoginPage />} />
 
-      <div className="ticks"></div>
+          {/* Protected Routes wrapped in global Layout */}
+          <Route element={<ProtectedRoute />}>
+            <Route element={<Layout />}>
+              {/* Admin Dashboard: Accessible by ADMIN */}
+              <Route
+                path="/admin"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN']}>
+                    <AdminDashboardPage />
+                  </ProtectedRoute>
+                }
+              />
 
-      <section id="next-steps">
-        <div id="docs">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#documentation-icon"></use>
-          </svg>
-          <h2>Documentation</h2>
-          <p>Your questions, answered</p>
-          <ul>
-            <li>
-              <a href="https://vite.dev/" target="_blank">
-                <img className="logo" src={viteLogo} alt="" />
-                Explore Vite
-              </a>
-            </li>
-            <li>
-              <a href="https://react.dev/" target="_blank">
-                <img className="button-icon" src={reactLogo} alt="" />
-                Learn more
-              </a>
-            </li>
-          </ul>
-        </div>
-        <div id="social">
-          <svg className="icon" role="presentation" aria-hidden="true">
-            <use href="/icons.svg#social-icon"></use>
-          </svg>
-          <h2>Connect with us</h2>
-          <p>Join the Vite community</p>
-          <ul>
-            <li>
-              <a href="https://github.com/vitejs/vite" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#github-icon"></use>
-                </svg>
-                GitHub
-              </a>
-            </li>
-            <li>
-              <a href="https://chat.vite.dev/" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#discord-icon"></use>
-                </svg>
-                Discord
-              </a>
-            </li>
-            <li>
-              <a href="https://x.com/vite_js" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#x-icon"></use>
-                </svg>
-                X.com
-              </a>
-            </li>
-            <li>
-              <a href="https://bsky.app/profile/vite.dev" target="_blank">
-                <svg
-                  className="button-icon"
-                  role="presentation"
-                  aria-hidden="true"
-                >
-                  <use href="/icons.svg#bluesky-icon"></use>
-                </svg>
-                Bluesky
-              </a>
-            </li>
-          </ul>
-        </div>
-      </section>
+              {/* POS Terminal: Accessible by CAISSIER & ADMIN */}
+              <Route
+                path="/pos"
+                element={
+                  <ProtectedRoute allowedRoles={['CAISSIER', 'ADMIN']}>
+                    <PosTerminalPage />
+                  </ProtectedRoute>
+                }
+              />
 
-      <div className="ticks"></div>
-      <section id="spacer"></section>
-    </>
-  )
+              {/* Stock Entry: Accessible by MAGASINIER & ADMIN */}
+              <Route
+                path="/stock-entry"
+                element={
+                  <ProtectedRoute allowedRoles={['MAGASINIER', 'ADMIN']}>
+                    <StockEntryPage />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Products Management: Accessible by ADMIN */}
+              <Route
+                path="/products"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN']}>
+                    <ProductsManagement />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Categories Management: Accessible by ADMIN */}
+              <Route
+                path="/categories"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN']}>
+                    <CategoriesManagement />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Blog & Articles Management: Accessible by ADMIN */}
+              <Route
+                path="/blog"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN']}>
+                    <BlogManagement />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/posts"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN']}>
+                    <BlogManagement />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* FAQs Management: Accessible by ADMIN */}
+              <Route
+                path="/faqs"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN']}>
+                    <FaqsManagement />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Store Settings: Accessible by ADMIN */}
+              <Route
+                path="/settings"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN']}>
+                    <StoreSettings />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Users Management: Accessible by ADMIN */}
+              <Route
+                path="/users"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN']}>
+                    <UsersManagement />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Brands Management: Accessible by ADMIN */}
+              <Route
+                path="/brands"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN']}>
+                    <BrandsManagement />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Suppliers Directory: Accessible by ADMIN & MAGASINIER */}
+              <Route
+                path="/suppliers"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN', 'MAGASINIER']}>
+                    <SuppliersManagement />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Supplier Purchases History: Accessible by ADMIN & MAGASINIER */}
+              <Route
+                path="/purchases-history"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN', 'MAGASINIER']}>
+                    <SupplierPurchasesHistory />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/suppliers/history"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN', 'MAGASINIER']}>
+                    <SupplierPurchasesHistory />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/suppliers-history"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN', 'MAGASINIER']}>
+                    <SupplierPurchasesHistory />
+                  </ProtectedRoute>
+                }
+              />
+
+              {/* Sales History & Clôture de Caisse: Accessible by ADMIN & CAISSIER */}
+              <Route
+                path="/sales-history"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN', 'CAISSIER']}>
+                    <SalesHistoryReport />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/sales/history"
+                element={
+                  <ProtectedRoute allowedRoles={['ADMIN', 'CAISSIER']}>
+                    <SalesHistoryReport />
+                  </ProtectedRoute>
+                }
+              />
+            </Route>
+          </Route>
+
+          {/* Root & Catch-all Fallback */}
+          <Route path="/" element={<Navigate to="/login" replace />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
+        </Routes>
+      </BrowserRouter>
+    </AuthProvider>
+  );
 }
-
-export default App
